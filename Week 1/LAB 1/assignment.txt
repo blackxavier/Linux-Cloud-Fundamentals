@@ -1,0 +1,306 @@
+1. Launch Azure Cloud Shell
+- I installed azure-cli on my ubuntu os via the terminal
+- command: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+2. Create a resource group
+- command: az group create --name arinzeResouceGroup --location eastus
+- Description: Azure groups are logical container into which azure resources are deployed and managed.
+- Terminal response
+{
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup",
+  "location": "eastus",
+  "managedBy": null,
+  "name": "arinzeResouceGroup",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
+-
+3. Create virtual machine
+-  command: az vm create --resource-group arinzeResouceGroup --name myVM  --image Debian --admin-username azureuser --generate-ssh-keys
+-  Terminal response
+{
+  "fqdns": "",
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Compute/virtualMachines/myVM",
+  "location": "eastus",
+  "macAddress": "00-0D-3A-17-EE-E0",
+  "powerState": "VM running",
+  "privateIpAddress": "10.0.0.4",
+  "publicIpAddress": "20.124.121.34",
+  "resourceGroup": "arinzeResouceGroup",
+  "zones": ""
+}
+-
+4. Open port 80 for web traffic
+-  command: az vm open-port --port 80 --resource-group arinzeResouceGroup --name myVM
+-  Terminal response
+{
+  "defaultSecurityRules": [
+    {
+      "access": "Allow",
+      "description": "Allow inbound traffic from all VMs in VNET",
+      "destinationAddressPrefix": "VirtualNetwork",
+      "destinationAddressPrefixes": [],
+      "destinationApplicationSecurityGroups": null,
+      "destinationPortRange": "*",
+      "destinationPortRanges": [],
+      "direction": "Inbound",
+      "etag": "W/\"3468fe8d-ea62-4733-85ab-b77f3bf342fb\"",
+      "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkSecurityGroups/myVMNSG/defaultSecurityRules/AllowVnetInBound",
+      "name": "AllowVnetInBound",
+      "priority": 65000,
+      "protocol": "*",
+      "provisioningState": "Succeeded",
+      "resourceGroup": "arinzeResouceGroup",
+      "sourceAddressPrefix": "VirtualNetwork",
+      "sourceAddressPrefixes": [],
+      "sourceApplicationSecurityGroups": null,
+      "sourcePortRange": "*",
+      "sourcePortRanges": [],
+      "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+    },
+    {
+      "access": "Allow",
+      "description": "Allow inbound traffic from azure load balancer",
+      "destinationAddressPrefix": "*",
+      "destinationAddressPrefixes": [],
+      "destinationApplicationSecurityGroups": null,
+      "destinationPortRange": "*",
+      "destinationPortRanges": [],
+      "direction": "Inbound",
+      "etag": "W/\"3468fe8d-ea62-4733-85ab-b77f3bf342fb\"",
+      "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkSecurityGroups/myVMNSG/defaultSecurityRules/AllowAzureLoadBalancerInBound",
+      "name": "AllowAzureLoadBalancerInBound",
+      "priority": 65001,
+      "protocol": "*",
+      "provisioningState": "Succeeded",
+      "resourceGroup": "arinzeResouceGroup",
+      "sourceAddressPrefix": "AzureLoadBalancer",
+      "sourceAddressPrefixes": [],
+      "sourceApplicationSecurityGroups": null,
+      "sourcePortRange": "*",
+      "sourcePortRanges": [],
+      "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+    },
+    {
+      "access": "Deny",
+      "description": "Deny all inbound traffic",
+      "destinationAddressPrefix": "*",
+      "destinationAddressPrefixes": [],
+      "destinationApplicationSecurityGroups": null,
+      "destinationPortRange": "*",
+      "destinationPortRanges": [],
+      "direction": "Inbound",
+      "etag": "W/\"3468fe8d-ea62-4733-85ab-b77f3bf342fb\"",
+      "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkSecurityGroups/myVMNSG/defaultSecurityRules/DenyAllInBound",
+      "name": "DenyAllInBound",
+      "priority": 65500,
+      "protocol": "*",
+      "provisioningState": "Succeeded",
+      "resourceGroup": "arinzeResouceGroup",
+      "sourceAddressPrefix": "*",
+      "sourceAddressPrefixes": [],
+      "sourceApplicationSecurityGroups": null,
+      "sourcePortRange": "*",
+      "sourcePortRanges": [],
+      "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+    },
+    {
+      "access": "Allow",
+      "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+      "destinationAddressPrefix": "VirtualNetwork",
+      "destinationAddressPrefixes": [],
+      "destinationApplicationSecurityGroups": null,
+      "destinationPortRange": "*",
+      "destinationPortRanges": [],
+      "direction": "Outbound",
+      "etag": "W/\"3468fe8d-ea62-4733-85ab-b77f3bf342fb\"",
+      "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkSecurityGroups/myVMNSG/defaultSecurityRules/AllowVnetOutBound",
+      "name": "AllowVnetOutBound",
+      "priority": 65000,
+      "protocol": "*",
+      "provisioningState": "Succeeded",
+      "resourceGroup": "arinzeResouceGroup",
+      "sourceAddressPrefix": "VirtualNetwork",
+      "sourceAddressPrefixes": [],
+      "sourceApplicationSecurityGroups": null,
+      "sourcePortRange": "*",
+      "sourcePortRanges": [],
+      "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+    },
+    {
+      "access": "Allow",
+      "description": "Allow outbound traffic from all VMs to Internet",
+      "destinationAddressPrefix": "Internet",
+      "destinationAddressPrefixes": [],
+      "destinationApplicationSecurityGroups": null,
+      "destinationPortRange": "*",
+      "destinationPortRanges": [],
+      "direction": "Outbound",
+      "etag": "W/\"3468fe8d-ea62-4733-85ab-b77f3bf342fb\"",
+      "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkSecurityGroups/myVMNSG/defaultSecurityRules/AllowInternetOutBound",
+      "name": "AllowInternetOutBound",
+      "priority": 65001,
+      "protocol": "*",
+      "provisioningState": "Succeeded",
+      "resourceGroup": "arinzeResouceGroup",
+      "sourceAddressPrefix": "*",
+      "sourceAddressPrefixes": [],
+      "sourceApplicationSecurityGroups": null,
+      "sourcePortRange": "*",
+      "sourcePortRanges": [],
+      "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+    },
+    {
+      "access": "Deny",
+      "description": "Deny all outbound traffic",
+      "destinationAddressPrefix": "*",
+      "destinationAddressPrefixes": [],
+      "destinationApplicationSecurityGroups": null,
+      "destinationPortRange": "*",
+      "destinationPortRanges": [],
+      "direction": "Outbound",
+      "etag": "W/\"3468fe8d-ea62-4733-85ab-b77f3bf342fb\"",
+      "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkSecurityGroups/myVMNSG/defaultSecurityRules/DenyAllOutBound",
+      "name": "DenyAllOutBound",
+      "priority": 65500,
+      "protocol": "*",
+      "provisioningState": "Succeeded",
+      "resourceGroup": "arinzeResouceGroup",
+      "sourceAddressPrefix": "*",
+      "sourceAddressPrefixes": [],
+      "sourceApplicationSecurityGroups": null,
+      "sourcePortRange": "*",
+      "sourcePortRanges": [],
+      "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+    }
+  ],
+  "etag": "W/\"3468fe8d-ea62-4733-85ab-b77f3bf342fb\"",
+  "flowLogs": null,
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkSecurityGroups/myVMNSG",
+  "location": "eastus",
+  "name": "myVMNSG",
+  "networkInterfaces": [
+    {
+      "auxiliaryMode": null,
+      "dnsSettings": null,
+      "dscpConfiguration": null,
+      "enableAcceleratedNetworking": null,
+      "enableIpForwarding": null,
+      "etag": null,
+      "extendedLocation": null,
+      "hostedWorkloads": null,
+      "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkInterfaces/myVMVMNic",
+      "ipConfigurations": null,
+      "location": null,
+      "macAddress": null,
+      "migrationPhase": null,
+      "name": null,
+      "networkSecurityGroup": null,
+      "nicType": null,
+      "primary": null,
+      "privateEndpoint": null,
+      "privateLinkService": null,
+      "provisioningState": null,
+      "resourceGroup": "arinzeResouceGroup",
+      "resourceGuid": null,
+      "tags": null,
+      "tapConfigurations": null,
+      "type": null,
+      "virtualMachine": null,
+      "vnetEncryptionSupported": null,
+      "workloadType": null
+    }
+  ],
+  "provisioningState": "Succeeded",
+  "resourceGroup": "arinzeResouceGroup",
+  "resourceGuid": "da49e533-788a-43f2-bc4d-9adc26d72317",
+  "securityRules": [
+    {
+      "access": "Allow",
+      "description": null,
+      "destinationAddressPrefix": "*",
+      "destinationAddressPrefixes": [],
+      "destinationApplicationSecurityGroups": null,
+      "destinationPortRange": "22",
+      "destinationPortRanges": [],
+      "direction": "Inbound",
+      "etag": "W/\"3468fe8d-ea62-4733-85ab-b77f3bf342fb\"",
+      "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkSecurityGroups/myVMNSG/securityRules/default-allow-ssh",
+      "name": "default-allow-ssh",
+      "priority": 1000,
+      "protocol": "Tcp",
+      "provisioningState": "Succeeded",
+      "resourceGroup": "arinzeResouceGroup",
+      "sourceAddressPrefix": "*",
+      "sourceAddressPrefixes": [],
+      "sourceApplicationSecurityGroups": null,
+      "sourcePortRange": "*",
+      "sourcePortRanges": [],
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "access": "Allow",
+      "description": null,
+      "destinationAddressPrefix": "*",
+      "destinationAddressPrefixes": [],
+      "destinationApplicationSecurityGroups": null,
+      "destinationPortRange": "80",
+      "destinationPortRanges": [],
+      "direction": "Inbound",
+      "etag": "W/\"3468fe8d-ea62-4733-85ab-b77f3bf342fb\"",
+      "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Network/networkSecurityGroups/myVMNSG/securityRules/open-port-80",
+      "name": "open-port-80",
+      "priority": 900,
+      "protocol": "*",
+      "provisioningState": "Succeeded",
+      "resourceGroup": "arinzeResouceGroup",
+      "sourceAddressPrefix": "*",
+      "sourceAddressPrefixes": [],
+      "sourceApplicationSecurityGroups": null,
+      "sourcePortRange": "*",
+      "sourcePortRanges": [],
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    }
+  ],
+  "subnets": null,
+  "tags": {},
+  "type": "Microsoft.Network/networkSecurityGroups"
+}
+-
+5. Connect to virtual machine 
+-  command: ssh azureuser@20.124.121.34
+- Terminal response
+The authenticity of host '20.124.121.34 (20.124.121.34)' can't be established.
+ECDSA key fingerprint is SHA256:CGg02GzLdkIWv3D3x29z0EzBB1OuH2gSJbDlp5XcefA.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '20.124.121.34' (ECDSA) to the list of known hosts.
+Linux myVM 4.19.0-20-cloud-amd64 #1 SMP Debian 4.19.235-1 (2022-03-17) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+-
+
+
+6. Install web server
+-  command: az vm run-command invoke -g arinzeResouceGroup -n myVM --command-id RunShellScript --scripts "sudo apt-get update && sudo apt-get install -y nginx"
+-  Terminal response
+{
+  "value": [
+    {
+      "code": "ProvisioningState/succeeded",
+      "displayStatus": "Provisioning succeeded",
+      "level": "Info",
+      "message": "Enable succeeded: \n[stdout]\ne libnginx-mod-http-xslt-filter.\r\nPreparing to unpack .../23-libnginx-mod-http-xslt-filter_1.14.2-2+deb10u4_amd64.deb ...\r\nUnpacking libnginx-mod-http-xslt-filter (1.14.2-2+deb10u4) ...\r\nSelecting previously unselected package libnginx-mod-mail.\r\nPreparing to unpack .../24-libnginx-mod-mail_1.14.2-2+deb10u4_amd64.deb ...\r\nUnpacking libnginx-mod-mail (1.14.2-2+deb10u4) ...\r\nSelecting previously unselected package libnginx-mod-stream.\r\nPreparing to unpack .../25-libnginx-mod-stream_1.14.2-2+deb10u4_amd64.deb ...\r\nUnpacking libnginx-mod-stream (1.14.2-2+deb10u4) ...\r\nSelecting previously unselected package nginx-full.\r\nPreparing to unpack .../26-nginx-full_1.14.2-2+deb10u4_amd64.deb ...\r\nUnpacking nginx-full (1.14.2-2+deb10u4) ...\r\nSelecting previously unselected package nginx.\r\nPreparing to unpack .../27-nginx_1.14.2-2+deb10u4_all.deb ...\r\nUnpacking nginx (1.14.2-2+deb10u4) ...\r\nSetting up libxau6:amd64 (1:1.0.8-1+b2) ...\r\nSetting up libxdmcp6:amd64 (1:1.1.2-3) ...\r\nSetting up libxcb1:amd64 (1.13.1-2) ...\r\nSetting up nginx-common (1.14.2-2+deb10u4) ...\r\ndebconf: unable to initialize frontend: Dialog\r\ndebconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)\r\ndebconf: falling back to frontend: Readline\r\ndebconf: unable to initialize frontend: Readline\r\ndebconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.28.1 /usr/local/share/perl/5.28.1 /usr/lib/x86_64-linux-gnu/perl5/5.28 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.28 /usr/share/perl/5.28 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)\r\ndebconf: falling back to frontend: Teletype\r\nCreated symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /lib/systemd/system/nginx.service.\r\nSetting up libjbig0:amd64 (2.1-3.1+b2) ...\r\nSetting up libjpeg62-turbo:amd64 (1:1.5.2-2+deb10u1) ...\r\nSetting up libnginx-mod-http-auth-pam (1.14.2-2+deb10u4) ...\r\nSetting up libnginx-mod-http-geoip (1.14.2-2+deb10u4) ...\r\nSetting up libx11-data (2:1.6.7-1+deb10u2) ...\r\nSetting up libwebp6:amd64 (0.6.1-2+deb10u1) ...\r\nSetting up fonts-dejavu-core (2.37-1) ...\r\nSetting up libnginx-mod-http-echo (1.14.2-2+deb10u4) ...\r\nSetting up libnginx-mod-http-subs-filter (1.14.2-2+deb10u4) ...\r\nSetting up libxslt1.1:amd64 (1.1.32-2.2~deb10u1) ...\r\nSetting up libx11-6:amd64 (2:1.6.7-1+deb10u2) ...\r\nSetting up libtiff5:amd64 (4.1.0+git191117-2~deb10u4) ...\r\nSetting up libnginx-mod-http-dav-ext (1.14.2-2+deb10u4) ...\r\nSetting up libnginx-mod-mail (1.14.2-2+deb10u4) ...\r\nSetting up libxpm4:amd64 (1:3.5.12-1) ...\r\nSetting up fontconfig-config (2.13.1-2) ...\r\ndebconf: unable to initialize frontend: Dialog\r\ndebconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)\r\ndebconf: falling back to frontend: Readline\r\ndebconf: unable to initialize frontend: Readline\r\ndebconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.28.1 /usr/local/share/perl/5.28.1 /usr/lib/x86_64-linux-gnu/perl5/5.28 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.28 /usr/share/perl/5.28 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)\r\ndebconf: falling back to frontend: Teletype\r\nSetting up libnginx-mod-stream (1.14.2-2+deb10u4) ...\r\nSetting up libnginx-mod-http-upstream-fair (1.14.2-2+deb10u4) ...\r\nSetting up libnginx-mod-http-xslt-filter (1.14.2-2+deb10u4) ...\r\nSetting up libfontconfig1:amd64 (2.13.1-2) ...\r\nSetting up libgd3:amd64 (2.2.5-5.2) ...\r\nSetting up libnginx-mod-http-image-filter (1.14.2-2+deb10u4) ...\r\nSetting up nginx-full (1.14.2-2+deb10u4) ...\r\nSetting up nginx (1.14.2-2+deb10u4) ...\r\nProcessing triggers for systemd (241-7~deb10u8) ...\r\nProcessing triggers for man-db (2.8.5-2) ...\r\nProcessing triggers for libc-bin (2.28-10+deb10u1) ...\r\n\n[stderr]\ndebconf: unable to initialize frontend: Dialog\ndebconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)\ndebconf: falling back to frontend: Readline\ndebconf: unable to initialize frontend: Readline\ndebconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.28.1 /usr/local/share/perl/5.28.1 /usr/lib/x86_64-linux-gnu/perl5/5.28 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.28 /usr/share/perl/5.28 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7, <> line 28.)\ndebconf: falling back to frontend: Teletype\ndpkg-preconfigure: unable to re-open stdin: \n",
+      "time": null
+    }
+  ]
+}
+-
+7. View the web server in action
+-  See images folder

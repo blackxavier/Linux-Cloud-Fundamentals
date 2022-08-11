@@ -1,0 +1,88 @@
+1. Create resource group
+-  command: az group create --name arinzeResouceGroup --location eastus
+-  terminal response
+{
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup",
+  "location": "eastus",
+  "managedBy": null,
+  "name": "arinzeResouceGroup",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
+-
+2. Create virtual machine
+-  command: az vm create --resource-group arinzeResouceGroup --name arinzeVM --image UbuntuLTS --admin-username azureuser --generate-ssh-keys
+-  terminal response
+
+  "fqdns": "",
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/arinzeResouceGroup/providers/Microsoft.Compute/virtualMachines/arinzeVM",
+  "location": "eastus",
+  "macAddress": "00-0D-3A-13-24-3A",
+  "powerState": "VM running",
+  "privateIpAddress": "10.0.0.4",
+  "publicIpAddress": "40.121.95.118",
+  "resourceGroup": "arinzeResouceGroup",
+  "zones": ""
+}
+-
+3. Connect to VM
+-  command: ssh azureuser@40.121.95.118
+4. Understand VM images
+-  Description: VM images are templates that contains operating system and other applications, an image is used to create a VM
+   The command below list the popular images with a table output. You can use the `--all` flag to list all vm images
+-  az vm image list --output table
+-  terminal response
+Partial output
+{
+    Architecture    Offer                         Publisher               Sku                                 Urn                                                                             UrnAlias                 Version
+--------------  ----------------------------  ----------------------  ----------------------------------  ------------------------------------------------------------------------------  -----------------------  ---------
+x64             CentOS                        OpenLogic               7.5                                 OpenLogic:CentOS:7.5:latest                                                     CentOS                   latest
+x64             debian-10                     Debian                  10                                  Debian:debian-10:10:latest                                                      Debian                   latest
+x64             flatcar-container-linux-free  kinvolk                 stable                              kinvolk:flatcar-container-linux-free:stable:latest                              Flatcar                  latest
+x64             opensuse-leap-15-3            SUSE                    gen2                                SUSE:opensuse-leap-15-3:gen2:latest                                             openSUSE-Leap            latest
+}
+-
+5. Understand VM sizes
+-  Description: The vm sizes determines the amount of compute resources e.g CPU,memory etc. The command list compute resources based on location
+-  command: az vm list-sizes --location eastus --output table
+- terminal response
+MaxDataDiskCount    MemoryInMb  Name                      NumberOfCores    OsDiskSizeInMb    ResourceDiskSizeInMb
+------------------  ------------  ----------------------  ---------------  ----------------  ----------------------
+                 2          3584  Standard_DS1                          1           1047552                    7168
+                 4          7168  Standard_DS2                          2           1047552                   14336
+                 8         14336  Standard_DS3                          4           1047552                   28672
+                16         28672  Standard_DS4                          8           1047552                   57344
+                 4         14336  Standard_DS11                         2           1047552                   28672
+                 8         28672  Standard_DS12                         4           1047552                   57344
+                16         57344  Standard_DS13                         8           1047552                  114688
+                32        114688  Standard_DS14                        16           1047552                  229376
+                 1           768  Standard_A0                           1           1047552                   20480
+                 2          1792  Standard_A1                           1           1047552                   71680
+                 4          3584  Standard_A2                           2           1047552                  138240
+                 8          7168  Standard_A3                           4           1047552                  291840
+                 4         14336  Standard_A5                           2           1047552                  138240
+                16         14336  Standard_A4                           8           1047552                  619520
+                 8         28672  Standard_A6                           4           1047552                  291840
+                16         57344  Standard_A7                           8           1047552                  619520
+-
+6. VM power states
+-  Description: Power states represents the current state of the VM
+                Starting - Indicates the virtual machine is started
+                Runnign - Indicates the virtual machine is running
+                Stopping - Indicates the virtual machine is stopped
+                Deallocating - Indicates the virtual machine is being deallocated
+                Deallocated- Indicates that the vm is removed from the hypervisor but still available in the control plane. VM is this state do not incur charges
+-  command: az vm get-instance-view --name arinzeVM --resource-group arinzeResouceGroup --query instanceView.statuses[1] --output table
+-  terminal response
+ode                DisplayStatus    Level
+------------------  ---------------  -------
+PowerState/running  VM running       Info
+
+7. Management tasks
+-  Description: Management tasks include starting a vm, stopping a vm, deleting  vm, listing public IP addresses 
+                few examples of command include
+                az vm list-ip-addresses --resource-group arinzeResouceGroup --name arinzeVM --output table
+                
