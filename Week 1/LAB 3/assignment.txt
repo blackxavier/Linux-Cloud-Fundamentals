@@ -1,0 +1,139 @@
+Azure disks - They are used to store used to store OS , applications and data on a VM.
+1. Default Azure disks -  When a vm is created , two disks are attached to it 
+    i. Operating system disk - This disks can be sized up to 2TB. It is used to store operating system and it is optimized for caching
+        The default location is /dev/sda
+    ii. Temporary Disk: THese disks are solid state drives that are stored in the same host as our vm.
+        If the vm is moved to another host, the data is ost. THe defualt location is dev/sdb have a mountpoint of /mnt.
+
+
+2. Azure data disks - THese are used to store persistent data . THey do not come with the VM when you instal it but can be easily added. 
+
+3. VM disk types - THere are two disk types
+    i. Standard disk - HDD, cost effective and performant
+    ii. Prenuim disk - SSD, high performant, low latency
+
+4. Launch Azure Cloud Shell
+    image located at images folder
+
+5. Create and attach disks
+-   command: az group create --name ArinzeResourceGroup --location eastus
+-   description: creating a resource group
+-   terminal response
+{
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/ArinzeResourceGroup",
+  "location": "eastus",
+  "managedBy": null,
+  "name": "ArinzeResourceGroup",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
+Create a vm and two data disk. THey are both 128GB
+-   command: az vm create --resource-group ArinzeResourceGroup --name arinzevm --image UbuntuLTS --size Standard_DS2_v2 --admin-username azureuser --generate-ssh-keys --data-disk-sizes-gb 128 128
+-   terminal response
+{
+  "fqdns": "",
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/ArinzeResourceGroup/providers/Microsoft.Compute/virtualMachines/arinzevm",
+  "location": "eastus",
+  "macAddress": "00-22-48-27-0B-A4",
+  "powerState": "VM running",
+  "privateIpAddress": "10.0.0.4",
+  "publicIpAddress": "13.92.99.56",
+  "resourceGroup": "ArinzeResourceGroup",
+  "zones": ""
+}
+Attach disk
+-   command: az vm disk attach --resource-group ArinzeResourceGroup --vm-name arinzevm --name myDataDisk --size-gb 128 --sku Premium_LRS --new
+
+6. Prepare data disks
+-   Description: THe os needs to be configured to use the disk. First we need to ssh into the vm
+-   command:ssh azureuser@13.92.99.56
+Partition the disk 
+-   command:sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
+Write a fie system to the partition  and make the OS aware of the change
+-   command: sudo mkfs.xfs /dev/sdc1
+              sudo partprobe /dev/sdc1
+-   terminal response
+{
+    meta-data=/dev/sdc1              isize=512    agcount=4, agsize=8388480 blks
+         =                       sectsz=4096  attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=0, rmapbt=0, reflink=0
+data     =                       bsize=4096   blocks=33553920, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=16383, version=2
+         =                       sectsz=4096  sunit=1 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+
+}
+Mount the new disk and make it accessible by the OS
+-   command:sudo mkdir /datadrive && sudo mount /dev/sdc1 /datadrive
+            df -h | grep -i "sd"
+-   terminal response
+{
+    /dev/sdb1        29G  1.5G   28G   5% /
+/dev/sdb15      105M  4.4M  100M   5% /boot/efi
+/dev/sda1        14G   28K   13G   1% /mnt
+/dev/sdc1       128G  163M  128G   1% /datadrive
+}
+
+7. Take a disk snapshot
+-   description: to get a disk snapshot we have to retrieve the disk ID
+-   command: osdiskid=$(az vm show -g ArinzeResourceGroup -n arinzevm --query "storageProfile.osDisk.managedDisk.id" -o tsv)
+Use ID to create snapshot
+-   command: az snapshot create --resource-group ArinzeResourceGroup --source "$osdiskid" --name osDisk-backup
+-   terminal response
+{
+  "completionPercent": null,
+  "creationData": {
+    "createOption": "Copy",
+    "galleryImageReference": null,
+    "imageReference": null,
+    "logicalSectorSize": null,
+    "securityDataUri": null,
+    "sourceResourceId": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/ArinzeResourceGroup/providers/Microsoft.Compute/disks/arinzevm_disk1_efcbb561faf34612a5c84b70b56c7fcf",
+    "sourceUniqueId": "efcbb561-faf3-4612-a5c8-4b70b56c7fcf",
+    "sourceUri": null,
+    "storageAccountId": null,
+    "uploadSizeBytes": null
+  },
+  "dataAccessAuthMode": null,
+  "diskAccessId": null,
+  "diskSizeBytes": 32213303296,
+  "diskSizeGb": 30,
+  "diskState": "Unattached",
+  "encryption": {
+    "diskEncryptionSetId": null,
+    "type": "EncryptionAtRestWithPlatformKey"
+  },
+  "encryptionSettingsCollection": null,
+  "extendedLocation": null,
+  "hyperVGeneration": "V1",
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/ArinzeResourceGroup/providers/Microsoft.Compute/snapshots/osDisk-backup",
+  "incremental": false,
+  "location": "eastus",
+  "managedBy": null,
+  "name": "osDisk-backup",
+  "networkAccessPolicy": "AllowAll",
+  "osType": "Linux",
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": "Enabled",
+  "purchasePlan": null,
+  "resourceGroup": "ArinzeResourceGroup",
+  "securityProfile": null,
+  "sku": {
+    "name": "Standard_LRS",
+    "tier": "Standard"
+  },
+  "supportedCapabilities": {
+    "acceleratedNetwork": true,
+    "architecture": "x64"
+  },
+  "supportsHibernation": true,
+  "tags": {},
+  "timeCreated": "2022-08-11T19:16:44.806691+00:00",
+  "type": "Microsoft.Compute/snapshots",
+  "uniqueId": "9252ae97-ebfd-46a2-804d-9397e7811bd9"
+}
