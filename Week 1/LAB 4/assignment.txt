@@ -1,0 +1,78 @@
+1. Supported SSH key formats
+With a secure shell pair you can create vm's that use SSH for authentication.
+vm's created with SSH are by default configured with password disabled, this makes brute force attacks difficult. 
+You can use `ssh-keygen` command to create SSH keys. By default the key are stored in a file located in the ~/.ssh directory.
+You can specify a different location and optional passphrase to access the private key
+
+2. Create an SSH key pair
+-   command:ssh-keygen -m PEM -t rsa -b 4096
+-   description: this command creates a key pai with rsa encryption and a bit length of 4096
+
+
+3. Provide an SSH public key when deploying a VM
+First i had to create a resource group
+-   terminal response
+{
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/myResourceGroup",
+  "location": "eastus",
+  "managedBy": null,
+  "name": "myResourceGroup",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
+Create vm with SSH key
+-   command:az vm create   --resource-group myResourceGroup   --name myVM   --image UbuntuLTS   --admin-username azureuser   --ssh-key-values ~/.ssh/id_rsa.pub
+-   terminal response
+{
+  "fqdns": "",
+  "id": "/subscriptions/9ec2ae79-d576-4a9d-9224-b32e5d0bb930/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM",
+  "location": "eastus",
+  "macAddress": "00-22-48-1E-88-C5",
+  "powerState": "VM running",
+  "privateIpAddress": "10.0.0.4",
+  "publicIpAddress": "20.25.116.229",
+  "resourceGroup": "myResourceGroup",
+  "zones": ""
+}
+
+
+
+4. SSH into your VM
+-   terminal response
+{
+    The authenticity of host '20.25.116.229 (20.25.116.229)' can't be established.
+ECDSA key fingerprint is SHA256:BcNk0XOe8BS4lJvV76DLqV7JAr6S7wA27NdmLO/J4ag.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '20.25.116.229' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 18.04.6 LTS (GNU/Linux 5.4.0-1089-azure x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Thu Aug 11 20:49:25 UTC 2022
+
+  System load:  0.18              Processes:           111
+  Usage of /:   4.8% of 28.89GB   Users logged in:     0
+  Memory usage: 5%                IP address for eth0: 10.0.0.4
+  Swap usage:   0%
+
+0 updates can be applied immediately.
+
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+azureuser@myVM:~$ 
+}
