@@ -1,0 +1,12 @@
+Resources
+1. Create Key pair
+- https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-keypairs.html
+2. Create vm
+- https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-instances.html#connecting-to-instances
+3. Open port 80
+- no Resource. I did it through the console
+4. Connect to a vm
+- https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html
+5. INstall web server
+- https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Tutorials.WebServerDB.CreateWebServer.html
+6. 
