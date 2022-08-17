@@ -1,0 +1,10 @@
+3. Understand VM images
+- An Amazon Machine Image (AMI) is a supported and maintained image provided by AWS that provides the information required to launch an instance. 
+- Resources - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html
+4. Understand VM sizes
+- AN Amazon Instance types comprise varying combinations of CPU, memory, storage, and networking capacity and give you the flexibility to choose the appropriate mix of resources for your applications.
+- Resources - https://aws.amazon.com/ec2/instance-types/
+5. VM power states
+- Resources - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html
+6. Management tasks
+- 
